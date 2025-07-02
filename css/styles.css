@@ -31,7 +31,7 @@ body {
 /* Tipografia */
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Playfair Display', serif;
-    font-weight: 600;
+    font-weight: 300;
     color: var(--text-light);
 }
 .special-text {
@@ -42,7 +42,8 @@ h1 {
 }
 
 h2 {
-    font-size: 1.5rem;
+    margin-top: 3rem;
+    font-size: 20px;
     margin-bottom: 1rem;
     position: relative;
     display: inline-block;
@@ -162,7 +163,7 @@ a {
 .header {
     background-color: rgba(10, 26, 35, 0.9);
     color: var(--text-light);
-    padding: 20px 0;
+    padding: 8px 0;
     position: fixed;
     width: 100%;
     top: 0;
@@ -173,7 +174,7 @@ a {
 }
 
 .header.scrolled {
-    padding: 15px 0;
+    padding: 10px 0;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
