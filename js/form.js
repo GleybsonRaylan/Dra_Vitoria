@@ -1,96 +1,84 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('form-contato');
-    
-    if (form) {
-        form.addEventListener('submit', enviarParaWhatsApp);
-    }
+// form.js - Arquivo adicional para funcionalidades do formulário
+document.addEventListener("DOMContentLoaded", function () {
+  // Máscara para telefone
+  const telefoneInput = document.getElementById("telefone");
+  if (telefoneInput) {
+    telefoneInput.addEventListener("input", function (e) {
+      let value = e.target.value.replace(/\D/g, "");
+
+      if (value.length > 11) {
+        value = value.substring(0, 11);
+      }
+
+      // Formatar como (XX) XXXXX-XXXX
+      if (value.length > 10) {
+        value = value.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+      } else if (value.length > 6) {
+        value = value.replace(/(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3");
+      } else if (value.length > 2) {
+        value = value.replace(/(\d{2})(\d{0,5})/, "($1) $2");
+      } else if (value.length > 0) {
+        value = value.replace(/(\d{0,2})/, "($1");
+      }
+
+      e.target.value = value;
+    });
+  }
+
+  // Validação em tempo real para todos os campos obrigatórios
+  const form = document.getElementById("form-contato");
+  if (form) {
+    const requiredFields = form.querySelectorAll("[required]");
+
+    requiredFields.forEach((field) => {
+      field.addEventListener("blur", function () {
+        validateField(this);
+      });
+
+      field.addEventListener("input", function () {
+        if (this.value.trim() !== "") {
+          clearFieldError(this);
+        }
+      });
+    });
+  }
 });
 
-function enviarParaWhatsApp(event) {
-    event.preventDefault();
-    
-    // Coletar dados do formulário
-    const nome = document.getElementById('nome').value;
-    const telefone = document.getElementById('telefone').value;
-    const servico = document.getElementById('servico').value;
-    const mensagem = document.getElementById('mensagem').value;
-    
-    // Validar campos
-    if (!validarTelefone(telefone)) {
-        mostrarErro('telefone', 'Por favor, insira um número de WhatsApp válido com DDD');
-        return;
-    }
-    
-    if (!nome || !servico || !mensagem) {
-        mostrarErroGeral('Por favor, preencha todos os campos obrigatórios');
-        return;
-    }
-    
-    // Formatando o número de telefone
-    const numeroWhatsApp = '5581995125671'; // Seu número com código do país e DDD
-    
-    // Criar mensagem formatada
-    const texto = `*Nova mensagem do site - Dra. Vitória Santos*\n\n` +
-                 `*Nome:* ${nome}\n` +
-                 `*Telefone:* ${telefone}\n` +
-                 `*Serviço de interesse:* ${document.getElementById('servico').options[document.getElementById('servico').selectedIndex].text}\n` +
-                 `*Mensagem:* ${mensagem}`;
-    
-    // Codificar a mensagem para URL
-    const textoCodificado = encodeURIComponent(texto);
-    
-    // Mostrar confirmação
-    mostrarConfirmacao();
-    
-    // Redirecionar para o WhatsApp após 2 segundos (tempo para usuário ver a mensagem)
-    setTimeout(() => {
-        window.open(`https://wa.me/${numeroWhatsApp}?text=${textoCodificado}`, '_blank');
-        document.getElementById('form-contato').reset();
-    }, 2000);
+// Funções de validação específicas
+function validateEmail(email) {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
 }
 
-function validarTelefone(telefone) {
-    // Remove todos os caracteres não numéricos
-    const numeros = telefone.replace(/\D/g, '');
-    // Verifica se tem pelo menos 10 dígitos (DDD + número)
-    return numeros.length >= 10;
+function formatPhoneNumber(phone) {
+  return phone.replace(/\D/g, "");
 }
 
-function mostrarErro(campoId, mensagem) {
-    const campo = document.getElementById(campoId);
-    campo.classList.add('input-error');
-    
-    // Remove mensagens de erro existentes
-    let errorElement = campo.nextElementSibling;
-    if (!errorElement || !errorElement.classList.contains('error-message')) {
-        errorElement = document.createElement('div');
-        errorElement.className = 'error-message';
-        campo.parentNode.insertBefore(errorElement, campo.nextSibling);
-    }
-    
-    errorElement.textContent = mensagem;
-    errorElement.style.display = 'block';
+// Feedback visual durante o envio
+function setFormLoading(isLoading) {
+  const submitBtn = document.querySelector(".btn-submit");
+  const originalText = submitBtn.textContent;
+
+  if (isLoading) {
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+    submitBtn.disabled = true;
+  } else {
+    submitBtn.textContent = originalText;
+    submitBtn.disabled = false;
+  }
 }
 
-function mostrarErroGeral(mensagem) {
-    alert(mensagem); // Pode ser substituído por um modal de erro mais bonito
-}
+// Limpar formulário após envio bem-sucedido
+function resetForm() {
+  const form = document.getElementById("form-contato");
+  if (form) {
+    form.reset();
 
-function mostrarConfirmacao() {
-    const elemento = document.getElementById('confirmation-message');
-    elemento.classList.add('confirmation-visible');
-}
+    // Limpar erros
+    const errorMessages = form.querySelectorAll(".error-message");
+    errorMessages.forEach((error) => error.remove());
 
-function fecharConfirmacao() {
-    const elemento = document.getElementById('confirmation-message');
-    elemento.classList.remove('confirmation-visible');
+    const errorInputs = form.querySelectorAll(".input-error");
+    errorInputs.forEach((input) => input.classList.remove("input-error"));
+  }
 }
-
-// Limpar erros quando o usuário começa a digitar
-document.getElementById('telefone').addEventListener('input', function() {
-    this.classList.remove('input-error');
-    const errorElement = this.nextElementSibling;
-    if (errorElement && errorElement.classList.contains('error-message')) {
-        errorElement.style.display = 'none';
-    }
-});
