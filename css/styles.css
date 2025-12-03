@@ -2,8 +2,8 @@
 :root {
   /* Cores Principais */
   --deep-blue: #003566;
-  --soft-green: #7baf9e;
-  --light-green: #c8d6c6;
+  --soft-green: #388b6fff;
+  --light-green: #90968fff;
   --soft-blue: #a6c9d9;
   --neutral-gray: #ececec;
   --soft-white: #fafafa;
@@ -202,7 +202,7 @@ img {
   left: 0;
   width: 100%;
   height: 100%;
-  background: var(--gradient-hero);
+  background: #00243d;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -320,7 +320,7 @@ img {
   top: 0;
   left: 0;
   width: 100%;
-  background: rgba(250, 250, 250, 0.95);
+  background: rgba(255, 255, 255, 1);
   backdrop-filter: blur(10px);
   box-shadow: var(--shadow-sm);
   z-index: 1000;
